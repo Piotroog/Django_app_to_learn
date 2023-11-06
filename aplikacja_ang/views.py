@@ -1,8 +1,9 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.urls import reverse_lazy
 from django.http import HttpResponse
+from django.views import generic
 
 def login_view(request):
     if request.method == 'POST':
@@ -20,4 +21,8 @@ def login_view(request):
         form = AuthenticationForm()
 
     return render(request, 'login.html', {'form': form})
-# Create your views here.
+
+class SignUpView(generic.CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')  # Przekierowuje do URL logowania po pomyślnej rejestracji
+    template_name = 'signup.html'
