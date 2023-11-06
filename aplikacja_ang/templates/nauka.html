@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Nauka Słówek</title>
+    <!-- Możesz dodać tutaj linki do CSS lub JavaScript jeśli potrzebujesz -->
+</head>
+<body>
+   <h2>Nauka nowych słówek</h2>
+    <ul>
+        {% for slowko in slowka_do_nauki %}
+            <li>{{ slowko.polskie }} - {{ slowko.angielskie }}</li>
+        {% endfor %}
+    </ul>
+ <a href="{% url 'home' %}" class="button">Strona Główna</a>
+</body>
+</html>

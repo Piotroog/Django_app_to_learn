@@ -17,5 +17,3 @@ class ZnajomoscSlowka(models.Model):
     class Meta:
         unique_together = [['user', 'slowko']]
 
-   # def __str__(self):
-   #    return f"{self.user.username} - {self.slowko.polskie} - {'zna' if self.zna else 'nie zna'}"
