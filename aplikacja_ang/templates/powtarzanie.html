@@ -7,5 +7,9 @@
 <body>
 POWTARZANIE
  <a href="{% url 'home' %}" class="button">Strona Główna</a>
+ <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Wyloguj się</button>
+    </form>
 </body>
 </html>
