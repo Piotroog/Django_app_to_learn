@@ -2,6 +2,11 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
+
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+
+
 class Slowko(models.Model):
     polskie = models.CharField(max_length=100)
     angielskie = models.CharField(max_length=100)
@@ -17,3 +22,8 @@ class ZnajomoscSlowka(models.Model):
     class Meta:
         unique_together = [['user', 'slowko']]
 
+@receiver(post_save, sender=User, dispatch_uid="new user")
+def Funkcja(sender, instance, created, raw, using, **kwargs):
+    if created:
+        for i in Slowko.objects.all():
+            ZnajomoscSlowka.objects.create(slowko=i, user = instance)

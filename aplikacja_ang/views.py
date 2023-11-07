@@ -39,24 +39,24 @@ class SignUpView(generic.CreateView):  #Przekierowuje do URL logowania po pomyś
 @login_required  # Dekorator wymusza, aby tylko zalogowani użytkownicy mieli dostęp do tego widoku
 def home(request):
     return render(request, 'home.html')
-@login_required
-def nauka_view(request):
-    # Pobieramy wszystkie słówka bezpośrednio z modelu Slowko.   DO SPRAWDZENIA
-    wszystkie_slowka = Slowko.objects.all()
-    return render(request, 'nauka.html', {'slowka_do_nauki': wszystkie_slowka})
+# @login_required
+# def nauka_view(request):
+#     # Pobieramy wszystkie słówka bezpośrednio z modelu Slowko.   DO SPRAWDZENIA
+#     wszystkie_slowka = Slowko.objects.all()
+#     return render(request, 'nauka.html', {'slowka_do_nauki': wszystkie_slowka})
 @login_required
 def powtarzanie_view(request):
     return render(request, 'powtarzanie.html')
 
 
-# @login_required
-# def nauka_view(request):    #DO SPRAWDZENIA
-#     # Pobierz wszystkie Słówka, których użytkownik nie zna
-#     slowka_ktorych_uzytkownik_nie_zna = ZnajomoscSlowka.objects.filter(user=request.user, zna=False)
-#
-#     # Pobierz obiekty Slowko powiązane z ZnajomoscSlowka
-#     slowka_do_nauki = [znajomosc.slowko for znajomosc in slowka_ktorych_uzytkownik_nie_zna]
-#
-#     return render(request, 'nauka.html', {'slowka_do_nauki': slowka_do_nauki})
+@login_required
+def nauka_view(request):    #DO SPRAWDZENIA
+    # Pobierz wszystkie Słówka, których użytkownik nie zna
+    slowka_ktorych_uzytkownik_nie_zna = ZnajomoscSlowka.objects.filter(user=request.user, zna=False)
+
+    # Pobierz obiekty Slowko powiązane z ZnajomoscSlowka
+    slowka_do_nauki = [znajomosc.slowko for znajomosc in slowka_ktorych_uzytkownik_nie_zna]
+
+    return render(request, 'nauka.html', {'slowka_do_nauki': slowka_do_nauki})
 
 
