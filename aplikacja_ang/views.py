@@ -82,3 +82,13 @@ def update_znajomosc_slowka(request):
             znajomosc.save()
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
+
+
+@login_required
+def powtarzanie_view(request):
+    slowka_do_powtorki = ZnajomoscSlowka.objects.filter(user=request.user, zna=True).select_related('slowko')
+    slowka_do_powtorki_json = json.dumps(
+        [model_to_dict(znajomosc.slowko, fields=['id', 'angielskie', 'polskie']) for znajomosc in slowka_do_powtorki],
+        cls=DjangoJSONEncoder
+    )
+    return render(request, 'powtarzanie.html', {'slowka_do_powtorki_json': slowka_do_powtorki_json})

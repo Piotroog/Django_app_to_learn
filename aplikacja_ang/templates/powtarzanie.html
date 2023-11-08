@@ -1,15 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Powtarzanie Słówek</title>
+    <!-- Dodaj tutaj linki do CSS -->
 </head>
 <body>
-POWTARZANIE
- <a href="{% url 'home' %}" class="button">Strona Główna</a>
- <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Wyloguj się</button>
-    </form>
+    <h2>Powtarzanie słówek</h2>
+    <div id="slowkoContainer">
+        <span id="angielskieSlowko"></span>
+        <input type="text" id="tłumaczenieInput" placeholder="Wpisz tłumaczenie">
+        <button onclick="sprawdzTlumaczenie()">Sprawdź</button>
+    </div>
+  <a href="{% url 'home' %}" class="button">Strona Główna</a>
+    <script id="slowka-data" type="application/json">
+        {{ slowka_do_powtorki_json|safe }}
+    </script>
+    <script>
+        var slowkaDataElement = document.getElementById('slowka-data');
+        var slowka = JSON.parse(slowkaDataElement.textContent);
+        var aktualneSlowkoIndex = 0;
+
+        function updateView() {
+            document.getElementById('angielskieSlowko').textContent = slowka[aktualneSlowkoIndex].angielskie;
+            document.getElementById('tłumaczenieInput').value = '';
+        }
+
+        function sprawdzTlumaczenie() {
+            var userTranslation = document.getElementById('tłumaczenieInput').value;
+            var correctTranslation = slowka[aktualneSlowkoIndex].polskie;
+            if (userTranslation.trim().toLowerCase() === correctTranslation.toLowerCase()) {
+                if (aktualneSlowkoIndex < slowka.length - 1) {
+                    aktualneSlowkoIndex++;
+                    updateView();
+                } else {
+                    alert("To było ostatnie słówko!");
+                }
+            } else {
+                alert("Spróbuj jeszcze raz!");
+            }
+        }
+
+        updateView();
+    </script>
 </body>
 </html>
