@@ -7,6 +7,12 @@ from django.views import generic
 from django.contrib.auth.decorators import login_required
 from .models import Slowko, ZnajomoscSlowka
 from django.views.decorators.http import require_POST
+from django.forms.models import model_to_dict
+from django.http import JsonResponse
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
+
 
 def login_view(request):  #Logowanie
     if request.method == 'POST':
@@ -39,24 +45,40 @@ class SignUpView(generic.CreateView):  #Przekierowuje do URL logowania po pomyś
 @login_required  # Dekorator wymusza, aby tylko zalogowani użytkownicy mieli dostęp do tego widoku
 def home(request):
     return render(request, 'home.html')
-# @login_required
-# def nauka_view(request):
-#     # Pobieramy wszystkie słówka bezpośrednio z modelu Slowko.   DO SPRAWDZENIA
-#     wszystkie_slowka = Slowko.objects.all()
-#     return render(request, 'nauka.html', {'slowka_do_nauki': wszystkie_slowka})
+
 @login_required
 def powtarzanie_view(request):
     return render(request, 'powtarzanie.html')
 
 
 @login_required
-def nauka_view(request):    #DO SPRAWDZENIA
-    # Pobierz wszystkie Słówka, których użytkownik nie zna
-    slowka_ktorych_uzytkownik_nie_zna = ZnajomoscSlowka.objects.filter(user=request.user, zna=False)
+def nauka_view(request):
+    slowka_ktorych_uzytkownik_nie_zna = ZnajomoscSlowka.objects.filter(
+        user=request.user,
+        zna=False
+    ).select_related('slowko')
 
-    # Pobierz obiekty Slowko powiązane z ZnajomoscSlowka
-    slowka_do_nauki = [znajomosc.slowko for znajomosc in slowka_ktorych_uzytkownik_nie_zna]
+    slowka_do_nauki = [
+        {
+            'id': znajomosc.slowko.id,
+            'polskie': znajomosc.slowko.polskie,
+            'angielskie': znajomosc.slowko.angielskie
+        } for znajomosc in slowka_ktorych_uzytkownik_nie_zna
+    ]
 
-    return render(request, 'nauka.html', {'slowka_do_nauki': slowka_do_nauki})
+    # Używamy DjangoJSONEncoder do bezpiecznego konwertowania na JSON
+    slowka_do_nauki_json = json.dumps(slowka_do_nauki, cls=DjangoJSONEncoder)
 
+    return render(request, 'nauka.html', {'slowka_do_nauki_json': slowka_do_nauki_json})
 
+@login_required
+@require_POST
+def update_znajomosc_slowka(request):
+    slowko_id = request.POST.get('slowko_id')
+    if slowko_id:
+        znajomosc, created = ZnajomoscSlowka.objects.get_or_create(user=request.user, slowko_id=slowko_id, defaults={'zna': True})
+        if not created:
+            znajomosc.zna = True
+            znajomosc.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})

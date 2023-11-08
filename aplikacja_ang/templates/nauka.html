@@ -3,19 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>Nauka Słówek</title>
-    <!-- Możesz dodać tutaj linki do CSS lub JavaScript jeśli potrzebujesz -->
+    <!-- Dodaj tutaj linki do CSS -->
+    <style>
+        #prevButton, #nextButton, #knowButton {
+            margin: 5px;
+        }
+        #slowkoContainer {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-   <h2>Nauka nowych słówek</h2>
-    <ul>
-        {% for slowko in slowka_do_nauki %}
-            <li>{{ slowko.polskie }} - {{ slowko.angielskie }}</li>
-        {% endfor %}
-    </ul>
- <a href="{% url 'home' %}" class="button">Strona Główna</a>
- <form action="{% url 'logout' %}" method="post">
+    <h2>Nauka nowych słówek</h2>
+    <div id="slowkoContainer">
+        <!-- Słówka zostaną tutaj wstawione przez JavaScript -->
+    </div>
+    <button id="prevButton" onclick="prevSlowko()">Poprzednie</button>
+    <button id="nextButton" onclick="nextSlowko()">Następne</button>
+    <button id="knowButton" onclick="znamSlowko()">Znam</button>
+    <a href="{% url 'home' %}" class="button">Strona Główna</a>
+
+    <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <button type="submit">Wyloguj się</button>
     </form>
+
+    <script id="slowka-data" type="application/json">
+        {{ slowka_do_nauki_json|safe }}
+    </script>
+    <script>
+        var slowkaDataElement = document.getElementById('slowka-data');
+        var slowka = JSON.parse(slowkaDataElement.textContent || slowkaDataElement.innerText);
+        var aktualneSlowkoIndex = 0;
+        var slowkoContainer = document.getElementById('slowkoContainer');
+
+        function updateView() {
+            if (slowka.length > 0) {
+                slowkoContainer.innerHTML = slowka[aktualneSlowkoIndex].polskie + ' - ' + slowka[aktualneSlowkoIndex].angielskie;
+            } else {
+                slowkoContainer.innerHTML = 'Brak słówek do nauki.';
+                document.getElementById('prevButton').style.visibility = 'hidden';
+                document.getElementById('nextButton').style.visibility = 'hidden';
+                document.getElementById('knowButton').style.visibility = 'hidden';
+            }
+        }
+
+        function nextSlowko() {
+            if (aktualneSlowkoIndex < slowka.length - 1) {
+                aktualneSlowkoIndex++;
+                updateView();
+            }
+        }
+
+        function prevSlowko() {
+            if (aktualneSlowkoIndex > 0) {
+                aktualneSlowkoIndex--;
+                updateView();
+            }
+        }
+
+        function znamSlowko() {
+            var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            var slowkoId = slowka[aktualneSlowkoIndex].id;
+
+            fetch('{% url 'update_znajomosc_slowka' %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: 'slowko_id=' + encodeURIComponent(slowkoId)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    slowka.splice(aktualneSlowkoIndex, 1);
+                    if (aktualneSlowkoIndex >= slowka.length) {
+                        aktualneSlowkoIndex = slowka.length - 1;
+                    }
+                    updateView();
+                }
+            });
+        }
+
+        // Inicjalizacja pierwszego słówka
+        updateView();
+    </script>
 </body>
 </html>
