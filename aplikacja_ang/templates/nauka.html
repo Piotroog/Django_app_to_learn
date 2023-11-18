@@ -6,19 +6,20 @@
 {% block title %}Strona Główna - Moja Aplikacja{% endblock %}
 
 {% block content %}
-    <h2>Nauka nowych słówek</h2>
+ <div class="container text-center">
+  <h1 style="color: #007bff; font-size: 40px;">NAUKA NOWYCH SŁÓWEK</h1>
     <div id="slowkoContainer">
-        <!-- Słówka zostaną tutaj wstawione przez JavaScript -->
     </div>
-    <button id="prevButton" onclick="prevSlowko()">Poprzednie</button>
-    <button id="nextButton" onclick="nextSlowko()">Następne</button>
-    <button id="knowButton" onclick="znamSlowko()">Znam</button>
-    <a href="{% url 'home' %}" class="button">Strona Główna</a>
+     <br>
+  <button id="prevButton" onclick="prevSlowko()" style="background-color: #6c757d; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Poprzednie</button>
+<button id="nextButton" onclick="nextSlowko()" style="background-color: #28a745; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Następne</button>
+<button id="knowButton" onclick="znamSlowko()" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Znam</button>
+<a href="{% url 'home' %}" class="button" style="background-color: #ffc107; color: white; border: none; border-radius: 5px; padding: 10px 15px; text-decoration: none; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); display: inline-block;">Strona Główna</a>
 
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Wyloguj się</button>
-    </form>
+<form action="{% url 'logout' %}" method="post" style="margin-top: 10px;">
+    {% csrf_token %}
+    <button type="submit" style="background-color: #dc3545; color: white; border: none; border-radius: 5px; padding: 10px 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Wyloguj się</button>
+</form>
 
     <script id="slowka-data" type="application/json">
         {{ slowka_do_nauki_json|safe }}
@@ -81,4 +82,5 @@
         // Inicjalizacja pierwszego słówka
         updateView();
     </script>
+     </div>
 {% endblock %}

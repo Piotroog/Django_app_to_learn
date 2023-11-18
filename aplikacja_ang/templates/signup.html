@@ -1,14 +1,14 @@
-
 {% extends "base.html" %}
 
 {% block title %}Strona Główna - Moja Aplikacja{% endblock %}
 
-
 {% block content %}
-  <h2>Sign Up</h2>
+ <div class="container text-center">
+  <h2 style="color: #007bff; font-size: 30px;">ZAREJESTRUJ SIĘ</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Sign up</button>
+    <button type="submit" style="background-color: #28a745; color: white; border: none; border-radius: 5px; padding: 10px 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); margin-top: 10px;">ZAREJESTRUJ SIĘ</button>
   </form>
+ </div>
 {% endblock %}

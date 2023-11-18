@@ -1,18 +1,25 @@
-
-
-
 {% extends "base.html" %}
 
 {% block title %}Strona Główna - Moja Aplikacja{% endblock %}
 
 {% block content %}
-    <h2>Powtarzanie słówek</h2>
+ <div class="container text-center">
+    <h1 style="color: #007bff; font-size: 40px;">POWTARZANIE SŁÓWEK</h1>
     <div id="slowkoContainer">
         <span id="angielskieSlowko"></span>
-        <input type="text" id="tłumaczenieInput" placeholder="Wpisz tłumaczenie">
-        <button onclick="sprawdzTlumaczenie()">Sprawdź</button>
+        <input type="text" id="tłumaczenieInput" placeholder="Wpisz tłumaczenie" style="margin-top: 10px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
+        <button onclick="sprawdzTlumaczenie()" style="background-color: #17a2b8; color: white; border: none; border-radius: 5px; padding: 10px 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Sprawdź</button>
     </div>
-  <a href="{% url 'home' %}" class="button">Strona Główna</a>
+     <br>
+    <button id="prevButton" onclick="prevSlowko()" style="background-color: #6c757d; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Poprzednie</button>
+    <button id="nextButton" onclick="nextSlowko()" style="background-color: #28a745; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Następne</button>
+    <a href="{% url 'home' %}" class="button" style="background-color: #ffc107; color: white; border: none; border-radius: 5px; padding: 10px 15px; text-decoration: none; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); display: inline-block;">Strona Główna</a>
+
+    <form action="{% url 'logout' %}" method="post" style="margin-top: 10px;">
+        {% csrf_token %}
+        <button type="submit" style="background-color: #dc3545; color: white; border: none; border-radius: 5px; padding: 10px 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2);">Wyloguj się</button>
+    </form>
+
     <script id="slowka-data" type="application/json">
         {{ slowka_do_powtorki_json|safe }}
     </script>
@@ -22,14 +29,36 @@
         var aktualneSlowkoIndex = 0;
 
         function updateView() {
-            document.getElementById('angielskieSlowko').textContent = slowka[aktualneSlowkoIndex].angielskie;
-            document.getElementById('tłumaczenieInput').value = '';
+            if (slowka.length > 0) {
+                document.getElementById('angielskieSlowko').textContent = slowka[aktualneSlowkoIndex].angielskie;
+                document.getElementById('tłumaczenieInput').value = '';
+            } else {
+                document.getElementById('angielskieSlowko').textContent = 'Brak słówek do powtórzenia.';
+                document.getElementById('tłumaczenieInput').style.visibility = 'hidden';
+                document.getElementById('prevButton').style.visibility = 'hidden';
+                document.getElementById('nextButton').style.visibility = 'hidden';
+            }
+        }
+
+        function nextSlowko() {
+            if (aktualneSlowkoIndex < slowka.length - 1) {
+                aktualneSlowkoIndex++;
+                updateView();
+            }
+        }
+
+        function prevSlowko() {
+            if (aktualneSlowkoIndex > 0) {
+                aktualneSlowkoIndex--;
+                updateView();
+            }
         }
 
         function sprawdzTlumaczenie() {
             var userTranslation = document.getElementById('tłumaczenieInput').value;
             var correctTranslation = slowka[aktualneSlowkoIndex].polskie;
             if (userTranslation.trim().toLowerCase() === correctTranslation.toLowerCase()) {
+                alert("Poprawne tłumaczenie!");
                 if (aktualneSlowkoIndex < slowka.length - 1) {
                     aktualneSlowkoIndex++;
                     updateView();
@@ -43,4 +72,5 @@
 
         updateView();
     </script>
+ </div>
 {% endblock %}
