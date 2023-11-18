@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <title>Powtarzanie Słówek</title>
-    <!-- Dodaj tutaj linki do CSS -->
-</head>
-<body>
+
+
+
+{% extends "base.html" %}
+
+{% block title %}Strona Główna - Moja Aplikacja{% endblock %}
+
+{% block content %}
     <h2>Powtarzanie słówek</h2>
     <div id="slowkoContainer">
         <span id="angielskieSlowko"></span>
@@ -43,5 +43,4 @@
 
         updateView();
     </script>
-</body>
-</html>
+{% endblock %}
