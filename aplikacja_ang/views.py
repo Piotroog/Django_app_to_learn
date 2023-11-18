@@ -14,6 +14,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 
 
+def start(request):
+    return render(request, 'start.html')
 def login_view(request):  #Logowanie
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)

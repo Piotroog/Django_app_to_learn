@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block title %}Strona Główna - Moja Aplikacja{% endblock %}
+
+{% block content %}
+ <div class="container text-center">
+  <h1 style="color: #007bff; font-size: 40px;">STRONA STARTOWA</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+          <a href="{% url 'login' %}" style="background-color: #007bff; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); text-decoration: none; display: inline-block;">Zaloguj się</a>
+   <a href="{% url 'signup' %}" style="background-color: #28a745; color: white; border: none; border-radius: 5px; padding: 10px 15px; margin-right: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.2); text-decoration: none; display: inline-block;">Zarejestruj się</a>
+
+
+  </form>
+</div>
+{% endblock %}
